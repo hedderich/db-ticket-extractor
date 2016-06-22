@@ -31,6 +31,10 @@ for filename in glob.iglob('*.pdf'):
   ticket_count += 1
 
   pdf = pdfquery.PDFQuery(filename)
+  pdf.load()
+
+  label_price = pdf.pq('LTTextLineHorizontal:contains("Summe")')
+
   result = pdf.extract([
      ('with_parent','LTPage[pageid=\'1\']'),
      ('with_formatter', 'text'),
@@ -41,7 +45,7 @@ for filename in glob.iglob('*.pdf'):
      ('fare', 'LTTextLineHorizontal:overlaps_bbox("39,719,209,729")'),
      ('discount', 'LTTextLineHorizontal:overlaps_bbox("86,695,185,705")'),
      ('route', 'LTTextLineHorizontal:overlaps_bbox("86,682,345,694")'),
-     ('price', 'LTTextLineHorizontal:overlaps_bbox("137,620,172,624")'),
+     ('price', 'LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (float(label_price.attr('x0'))+100, float(label_price.attr('y0')), float(label_price.attr('x0'))+150, float(label_price.attr('y0'))+15)),
      ('ticket_id', 'LTTextLineHorizontal:overlaps_bbox("504,533,548,543")')
   ])
 
@@ -50,4 +54,6 @@ for filename in glob.iglob('*.pdf'):
   csv_writer.writerow(result.values())
 
   print(result)
+
+  #sys.exit(1);
 
