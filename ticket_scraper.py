@@ -34,19 +34,28 @@ for filename in glob.iglob('*.pdf'):
   pdf.load()
 
   label_price = pdf.pq('LTTextLineHorizontal:contains("Summe")')
+  label_route = pdf.pq('LTTextLineHorizontal:contains("ber: ")')
 
   result = pdf.extract([
-     ('with_parent','LTPage[pageid=\'1\']'),
-     ('with_formatter', 'text'),
-     
-     # scrape by absolute position, doesn't work with all kinds of tickets
+    ('with_parent','LTPage[pageid=\'1\']'),
+    ('with_formatter', 'text'),
+ 
+    # scrape by absolute position doesn't work with all kinds of tickets
 
-     ('validity', 'LTTextLineHorizontal:overlaps_bbox("86,734,198,746")'),
-     ('fare', 'LTTextLineHorizontal:overlaps_bbox("39,719,209,729")'),
-     ('discount', 'LTTextLineHorizontal:overlaps_bbox("86,695,185,705")'),
-     ('route', 'LTTextLineHorizontal:overlaps_bbox("86,682,345,694")'),
-     ('price', 'LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (float(label_price.attr('x0'))+100, float(label_price.attr('y0')), float(label_price.attr('x0'))+150, float(label_price.attr('y0'))+15)),
-     ('ticket_id', 'LTTextLineHorizontal:overlaps_bbox("504,533,548,543")')
+    ('validity', 'LTTextLineHorizontal:overlaps_bbox("86,734,198,746")'),
+    ('fare', 'LTTextLineHorizontal:overlaps_bbox("39,719,209,729")'),
+    ('discount', 'LTTextLineHorizontal:overlaps_bbox("86,695,185,705")'),
+    ('route', 'LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (
+      float(label_route.attr('x0')), 
+      float(label_route.attr('y0')), 
+      float(label_route.attr('x0'))+350, 
+      float(label_route.attr('y0'))+25)),
+    ('price', 'LTTextLineHorizontal:in_bbox("%s, %s, %s, %s")' % (
+      float(label_price.attr('x0'))+100, 
+      float(label_price.attr('y0')), 
+      float(label_price.attr('x0'))+150, 
+      float(label_price.attr('y0'))+15)),
+    ('ticket_id', 'LTTextLineHorizontal:overlaps_bbox("504,533,548,543")')
   ])
 
   if ticket_count == 1:
