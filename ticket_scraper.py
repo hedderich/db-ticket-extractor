@@ -64,5 +64,4 @@ for filename in glob.iglob('*.pdf'):
 
   print(result)
 
-  #sys.exit(1);
 
